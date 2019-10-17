@@ -22,6 +22,8 @@ var AD_FEATURES = [
   'conditioner'
 ];
 
+// MERGE
+
 var getRandomNumber = function (min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
