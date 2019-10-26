@@ -11,12 +11,12 @@ var AD_TYPE = {
   BUNGALO: 'bungalo'
 };
 
-var AD_NAME = {
-  palace: 'Дворец',
-  flat: 'Квартира',
-  house: 'Дом',
-  bungalo: 'Бунгало'
-};
+// var AD_NAME = {
+//   palace: 'Дворец',
+//   flat: 'Квартира',
+//   house: 'Дом',
+//   bungalo: 'Бунгало'
+// };
 
 var AD_CHECKIN = ['12:00', '13:00', '14:00'];
 
@@ -38,9 +38,9 @@ var mapPinMainElement = mapElement.querySelector('.map__pin--main');
 var roomsSelectElement = formElement.querySelector('select[name=rooms]');
 var capacitySelectElement = formElement.querySelector('select[name=capacity]');
 
-var getAdTypeName = function (type) {
-  return AD_NAME[type];
-};
+// var getAdTypeName = function (type) {
+//   return AD_NAME[type];
+// };
 
 var getRandomNumber = function (min, max) {
   min = Math.ceil(min);
