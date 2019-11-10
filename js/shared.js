@@ -18,6 +18,10 @@
       min = Math.ceil(min);
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
+    limit: function (value, min, max) {
+      return Math.min(max, Math.max(min, value));
     }
   };
 })();
