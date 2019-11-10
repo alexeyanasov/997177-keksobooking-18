@@ -5,10 +5,15 @@
   var MAX_PIN_Y = 630;
   var PIN_HALF_WIDTH = 32;
 
+  var isMapActivated = false;
+
   var mapElement = document.querySelector('.map');
   var mapPinMainElement = mapElement.querySelector('.map__pin--main');
 
-  var isMapActivated = false;
+  var initialMainPinPosition = {
+    x: mapPinMainElement.offsetLeft,
+    y: mapPinMainElement.offsetTop,
+  };
 
   var limitPinX = function (x) {
     var minMainPinX = PIN_HALF_WIDTH;
@@ -20,6 +25,15 @@
   var limitPinY = function (y) {
     return window.shared.limit(y, MIN_PIN_Y, MAX_PIN_Y);
   };
+
+  var setMainPinPosition = function (position) {
+    mapPinMainElement.style.left = position.x + 'px';
+    mapPinMainElement.style.top = position.y + 'px';
+
+    window.form.updateAddress();
+  };
+
+  setMainPinPosition(initialMainPinPosition);
 
   mapPinMainElement.addEventListener('mousedown', function (mouseDownEvent) {
     mouseDownEvent.preventDefault();
@@ -46,16 +60,15 @@
         y: mouseMoveEvent.clientY
       };
 
-      var nextX = mapPinMainElement.offsetLeft - shift.x;
-      var nextY = mapPinMainElement.offsetTop - shift.y;
+      var nextPosition = {
+        x: mapPinMainElement.offsetLeft - shift.x,
+        y: mapPinMainElement.offsetTop - shift.y
+      };
 
-      nextX = limitPinX(nextX);
-      nextY = limitPinY(nextY);
+      nextPosition.x = limitPinX(nextPosition.x);
+      nextPosition.y = limitPinY(nextPosition.y);
 
-      mapPinMainElement.style.left = nextX + 'px';
-      mapPinMainElement.style.top = nextY + 'px';
-
-      window.form.updateAddress();
+      setMainPinPosition(nextPosition);
     };
 
     var onMouseUp = function (mouseUpEvent) {
@@ -88,12 +101,11 @@
 
     deactivate: function () {
       isMapActivated = false;
-    },
 
-    getMainPinAddress: function () {
-      var x = window.shared.parseInt(mapPinMainElement.style.left);
-      var y = window.shared.parseInt(mapPinMainElement.style.top);
-      return x + ', ' + y;
-    }
+      window.ads.clear();
+      setMainPinPosition(initialMainPinPosition);
+
+      mapElement.classList.add('map--faded');
+    },
   };
 })();
