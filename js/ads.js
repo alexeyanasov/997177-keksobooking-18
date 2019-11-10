@@ -11,6 +11,8 @@
   };
 
   var mapElement = document.querySelector('.map');
+  var mapPinsElement = mapElement.querySelector('.map__pins');
+  var mainMapPinElement = mapElement.querySelector('.map__pin--main');
 
   var getAdTypeName = function (type) {
     return AD_NAME[type];
@@ -26,12 +28,11 @@
         window.shared.showErrorMessage(message, window.ads.load);
       };
 
-      window.network.load(DATA_URL, onSuccess, onError);
+      window.network.get(DATA_URL, onSuccess, onError);
     },
 
     append: function (ads) {
       var fragment = document.createDocumentFragment();
-      var mapPinsElement = document.querySelector('.map__pins');
 
       var adSelectHandler = function (index) {
         window.ads.showCard(ads[index]);
@@ -57,6 +58,16 @@
       });
 
       mapPinsElement.appendChild(fragment);
+    },
+
+    clear: function () {
+      var pinElements = mapElement.querySelectorAll('.map__pin');
+
+      pinElements.forEach(function (pinElement) {
+        if (pinElement !== mainMapPinElement) {
+          mapPinsElement.removeChild(pinElement);
+        }
+      });
     },
 
     closeCard: function () {
