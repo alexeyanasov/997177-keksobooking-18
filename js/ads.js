@@ -1,14 +1,7 @@
 'use strict';
 
 (function () {
-  var NUMBER_OF_ADS = 8;
-
-  var AD_TYPE = {
-    BUNGALO: 'bungalo',
-    FLAT: 'flat',
-    HOUSE: 'house',
-    PALACE: 'palace',
-  };
+  var DATA_URL = 'https://js.dump.academy/keksobooking/data';
 
   var AD_NAME = {
     bungalo: 'Бунгало',
@@ -17,81 +10,23 @@
     palace: 'Дворец',
   };
 
-  var AD_CHECKIN = ['12:00', '13:00', '14:00'];
-
-  var AD_CHECKOUT = ['12:00', '13:00', '14:00'];
-
-  var AD_FEATURES = [
-    'wifi',
-    'dishwasher',
-    'parking',
-    'washer',
-    'elevator',
-    'conditioner'
-  ];
-
   var mapElement = document.querySelector('.map');
 
   var getAdTypeName = function (type) {
     return AD_NAME[type];
   };
 
-  var getAvatar = function (index) {
-    return 'img/avatars/user0' + index + '.png';
-  };
-
-  var getRandomAdType = function () {
-    var keys = Object.keys(AD_TYPE);
-    var index = window.shared.getRandomNumber(0, keys.length - 1);
-
-    return AD_TYPE[keys[index]];
-  };
-
-  var getRandomLocation = function () {
-    return {
-      x: window.shared.getRandomNumber(0, 1200),
-      y: window.shared.getRandomNumber(130, 630)
-    };
-  };
-
-  var generateAd = function (index) {
-    return {
-      author: {
-        avatar: getAvatar(index)
-      },
-
-      offer: {
-        title: 'Title',
-        address: '600, 350',
-        price: 100,
-        type: getRandomAdType(),
-        rooms: 1,
-        guests: 1,
-        checkin: AD_CHECKIN[0],
-        checkout: AD_CHECKOUT[0],
-        features: AD_FEATURES,
-        description: '',
-        photos: [
-          'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-          'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-          'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
-        ]
-      },
-
-      location: getRandomLocation()
-    };
-  };
-
   window.ads = {
-    generate: function () {
-      var ads = [];
+    load: function () {
+      var onSuccess = function (ads) {
+        window.ads.append(ads);
+      };
 
-      for (var i = 1; i <= NUMBER_OF_ADS; i++) {
-        var ad = generateAd(i);
-        ads.push(ad);
-      }
+      var onError = function (message) {
+        window.shared.showErrorMessage(message, window.ads.load);
+      };
 
-      return ads;
+      window.network.load(DATA_URL, onSuccess, onError);
     },
 
     append: function (ads) {

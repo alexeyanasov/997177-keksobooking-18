@@ -82,9 +82,7 @@
 
       if (!isMapActivated) {
         isMapActivated = true;
-
-        var ads = window.ads.generate();
-        window.ads.append(ads);
+        window.ads.load();
       }
     },
 
