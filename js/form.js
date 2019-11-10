@@ -108,7 +108,6 @@
     deactivate: function () {
       formElement.reset();
 
-      window.form.updateAddress();
       priceInputElement.placeholder = MIN_PRICES[typeSelectElement.value];
 
       fieldsetElements.forEach(function (fieldsetElement) {
