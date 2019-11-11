@@ -95,14 +95,14 @@
 
       if (!isMapActivated) {
         isMapActivated = true;
-        window.ads.load();
+        window.ads.activate();
       }
     },
 
     deactivate: function () {
       isMapActivated = false;
 
-      window.ads.clear();
+      window.ads.deactivate();
       setMainPinPosition(initialMainPinPosition);
 
       mapElement.classList.add('map--faded');
