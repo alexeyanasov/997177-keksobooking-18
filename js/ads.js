@@ -2,6 +2,8 @@
 
 (function () {
   var DATA_URL = 'https://js.dump.academy/keksobooking/data';
+  var PRICE_LOW = 10000;
+  var PRICE_HIGH = 50000;
 
   var AD_NAME = {
     bungalo: 'Бунгало',
@@ -19,12 +21,39 @@
   var mapFiltersFieldsetElements = mapFiltersElement.querySelectorAll('fieldset');
 
   var typeSelectElement = mapFiltersElement.querySelector('select[name=housing-type]');
+  var priceSelectElement = mapFiltersElement.querySelector('select[name=housing-price]');
+  var roomsSelectElement = mapFiltersElement.querySelector('select[name=housing-rooms]');
+  var guestsSelectElement = mapFiltersElement.querySelector('select[name=housing-guests]');
+  var featuresInputElements = mapFiltersElement.querySelectorAll('input[name=features]');
 
   var allAds = [];
   var filteredAds = [];
   var filters = {
     type: 'any',
+    price: 'any',
+    rooms: 'any',
+    guests: 'any',
+    features: {
+      wifi: false,
+      dishwasher: false,
+      parking: false,
+      washer: false,
+      elevator: false,
+      conditioner: false
+    },
     count: 5,
+  };
+
+  var getPriceType = function (price) {
+    if (price < PRICE_LOW) {
+      return 'low';
+    }
+
+    if (price > PRICE_HIGH) {
+      return 'high';
+    }
+
+    return 'middle';
   };
 
   var getAdTypeName = function (type) {
@@ -83,14 +112,45 @@
     });
   };
 
+  var applyFilter = function (filter, ads, predicate) {
+    if (filters[filter] !== 'any') {
+      return ads.filter(predicate);
+    }
+
+    return ads;
+  };
+
   var applyFilters = function () {
     filteredAds = allAds;
 
-    if (filters.type !== 'any') {
+    filteredAds = applyFilter('type', filteredAds, function (ad) {
+      return ad.offer.type === filters.type;
+    });
+
+    filteredAds = applyFilter('price', filteredAds, function (ad) {
+      var price = getPriceType(ad.offer.price);
+      return price === filters.price;
+    });
+
+    filteredAds = applyFilter('rooms', filteredAds, function (ad) {
+      return ad.offer.rooms === window.shared.parseInt(filters.rooms);
+    });
+
+    filteredAds = applyFilter('guests', filteredAds, function (ad) {
+      return ad.offer.guests === window.shared.parseInt(filters.guests);
+    });
+
+    Object.keys(filters.features).forEach(function (filterFeature) {
+      if (!filters.features[filterFeature]) {
+        return;
+      }
+
       filteredAds = filteredAds.filter(function (ad) {
-        return ad.offer.type === filters.type;
+        return ad.offer.features.find(function (offerFeature) {
+          return offerFeature === filterFeature;
+        });
       });
-    }
+    });
 
     filteredAds = filteredAds.slice(0, filters.count);
 
@@ -98,12 +158,29 @@
     appendPins(filteredAds);
   };
 
-  var typeChangeHandler = function (evt) {
-    filters.type = evt.target.value;
+  var filterChangeHandler = function (filter) {
+    return function (evt) {
+      filters[filter] = evt.target.value;
+      applyFilters();
+    };
+  };
+
+  var featureChangeHandler = function (evt) {
+    var feature = evt.target.value;
+    var checked = evt.target.checked;
+
+    filters.features[feature] = checked;
     applyFilters();
   };
 
-  typeSelectElement.addEventListener('change', typeChangeHandler);
+  typeSelectElement.addEventListener('change', filterChangeHandler('type'));
+  priceSelectElement.addEventListener('change', filterChangeHandler('price'));
+  roomsSelectElement.addEventListener('change', filterChangeHandler('rooms'));
+  guestsSelectElement.addEventListener('change', filterChangeHandler('guests'));
+
+  featuresInputElements.forEach(function (featureInputElement) {
+    featureInputElement.addEventListener('change', featureChangeHandler);
+  });
 
   window.ads = {
     activate: function () {

@@ -41,6 +41,20 @@
       return Math.min(max, Math.max(min, value));
     },
 
+    debounce: function (cb, interval) {
+      var lastTimeout = null;
+
+      return function () {
+        var parameters = arguments;
+        if (lastTimeout) {
+          window.clearTimeout(lastTimeout);
+        }
+        lastTimeout = window.setTimeout(function () {
+          cb.apply(null, parameters);
+        }, interval);
+      };
+    },
+
     showSuccessMessage: function () {
       successElement.style.display = 'block';
 
